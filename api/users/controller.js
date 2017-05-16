@@ -18,20 +18,12 @@ module.exports = {
 
   getId: (req, res, next) => {
     User
-      .findOne({
-        where: {
-          id: req.params.user_id
-        }
-      })
+      .findById(req.params.user_id)
       .then(user => {
-        res.status(200).send({
-          data: user
-        })
+        res.status(200).send({ data: user })
       })
       .catch(error => {
-        res.status(400).send({
-          err: error
-        })
+        res.status(400).send({ err: error })
       })
   },
 
@@ -49,19 +41,23 @@ module.exports = {
       password: req.body.password
     }
 
-    User.create(data)
-      .then(user => {
-        res.status(200).send({
+    User
+      .findOrCreate({
+        where: {email: data.email},
+        defaults: {
+          name: data.name,
+          password: data.password
+        }
+      }).spread((user, created) => {
+        console.log(created)
+        res.status(201).send({
           data: {
-            name: user.name,
-            email: user.email
+            name: data.name,
+            email: data.email
           }
         })
-      })
-      .catch(error => {
-        res.status(400).send({
-          err: error
-        })
+      }).catch(err => {
+        res.status(400).send({ err: error })
       })
   },
 
@@ -72,21 +68,21 @@ module.exports = {
   },
 
   deleteAll: (req, res, next) => {
-    User.destroy({
-      truncate: true
-    }).then(data => {
-      res.status(200).send({
-        m: `All users have been deleted.`
+    User
+      .destroy({
+        truncate: true
+      }).then(data => {
+        res.status(200).send({
+          m: `All users have been deleted.`
+        })
+      }).catch(error => {
+        res.status(400).send({ err: error })
       })
-    }).catch(error => {
-      res.status(400).send({
-        err: error
-      })
-    })
   },
 
   delete: (req, res, next) => {
-    User.findById(req.params.user_id)
+    User
+      .findById(req.params.user_id)
       .then(data => {
         if (!data) {
           res.status(404).send({
