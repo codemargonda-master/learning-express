@@ -4,6 +4,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
+    "setup": "mysql -u root -p < scripts/setup.sql",
     "start": "forever index",
     "dev": "nodemon"
   },
