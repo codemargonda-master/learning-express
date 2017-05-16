@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "setup": "mysql -u root -p < scripts/setup.sql",
+    "setup": "mysql -u root -p < scripts/setup.sql && sequelize db:migrate && sequelize db:seed:all",
     "start": "forever index",
     "dev": "nodemon"
   },
