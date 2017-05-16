@@ -9,6 +9,12 @@ module.exports = function (sequelize, DataTypes) {
     classMethods: {
       associate: function (models) {
         // associations can be defined here
+        Post.belongsTo(models.User, {
+          onDelete: 'CASCADE',
+          foreignKey: {
+            allowNull: false
+          }
+        })
       }
     }
   })
