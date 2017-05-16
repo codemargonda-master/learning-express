@@ -1,8 +1,21 @@
+const User = require('../../models').User
+
 module.exports = {
   getAll: (req, res, next) => {
-    res.status(200).send({
-      message: 'GET ALL'
-    })
+    User
+      .findAll()
+      .then(users => {
+        console.log(users)
+        res.status(200).send({
+          data: users
+        })
+      })
+      .catch(error => {
+        console.log(error)
+        res.status(400).send({
+          err: error
+        })
+      })
   },
 
   getId: (req, res, next) => {
@@ -19,11 +32,29 @@ module.exports = {
   },
 
   create: (req, res, next) => {
-    res.status(201).send({
-      body: req.body,
-      params: req.params,
-      query: req.query
-    })
+    const data = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password
+    }
+
+    User
+      .create(data)
+      .then(user => {
+        console.log(data)
+        res.status(200).send({
+          data: {
+            name: user.name,
+            email: user.email
+          }
+        })
+      })
+      .catch(error => {
+        console.log(error)
+        res.status(400).send({
+          err: error
+        })
+      })
   },
 
   update: (req, res, next) => {
