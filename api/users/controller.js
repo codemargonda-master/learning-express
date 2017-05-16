@@ -109,7 +109,7 @@ module.exports = {
             where: { id: req.params.user_id },
             truncate: true
           }).then(() => {
-            res.status(204).send({
+            res.status(200).send({
               m: `User with id ${req.params.user_id} has been deleted.`
             })
           }).catch(error => {
