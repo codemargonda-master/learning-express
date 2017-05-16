@@ -62,8 +62,24 @@ module.exports = {
   },
 
   update: (req, res, next) => {
-    res.status(200).send({
-      message: 'PUT'
+    const newData = {
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password
+    }
+
+    User.update(
+      newData,
+      { where: { id: req.params.user_id } }
+    ).then(data => {
+      res.status(200).send({
+        data: {
+          name: newData.name,
+          email: newData.email
+        }
+      })
+    }).catch(err => {
+      res.status(400).send({ err: error })
     })
   },
 
