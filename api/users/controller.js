@@ -5,13 +5,11 @@ module.exports = {
     User
       .findAll()
       .then(users => {
-        console.log(users)
         res.status(200).send({
           data: users
         })
       })
       .catch(error => {
-        console.log(error)
         res.status(400).send({
           err: error
         })
@@ -19,9 +17,22 @@ module.exports = {
   },
 
   getId: (req, res, next) => {
-    res.status(200).send({
-      user: req.params.user_id
-    })
+    User
+      .findOne({
+        where: {
+          id: req.params.user_id
+        }
+      })
+      .then(user => {
+        res.status(200).send({
+          data: user
+        })
+      })
+      .catch(error => {
+        res.status(400).send({
+          err: error
+        })
+      })
   },
 
   getIdWithPost: (req, res, next) => {
@@ -38,10 +49,8 @@ module.exports = {
       password: req.body.password
     }
 
-    User
-      .create(data)
+    User.create(data)
       .then(user => {
-        console.log(data)
         res.status(200).send({
           data: {
             name: user.name,
@@ -50,7 +59,6 @@ module.exports = {
         })
       })
       .catch(error => {
-        console.log(error)
         res.status(400).send({
           err: error
         })
@@ -63,10 +71,42 @@ module.exports = {
     })
   },
 
-  delete: (req, res, next) => {
-    res.status(200).send({
-      message: 'DELETE'
+  deleteAll: (req, res, next) => {
+    User.destroy({
+      truncate: true
+    }).then(data => {
+      res.status(200).send({
+        m: `All users have been deleted.`
+      })
+    }).catch(error => {
+      res.status(400).send({
+        err: error
+      })
     })
+  },
+
+  delete: (req, res, next) => {
+    User.findById(req.params.user_id)
+      .then(data => {
+        if (!data) {
+          res.status(404).send({
+            m: `User with id ${req.params.user_id} is not found.`
+          })
+        } else {
+          User.destroy({
+            where: { id: req.params.user_id },
+            truncate: true
+          }).then(() => {
+            res.status(204).send({
+              m: `User with id ${req.params.user_id} has been deleted.`
+            })
+          }).catch(error => {
+            res.status(400).send({ err: error })
+          })
+        }
+      }).catch(err => {
+        res.status(400).send({ err: error })
+      })
   }
 
 }
